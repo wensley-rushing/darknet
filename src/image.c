@@ -591,20 +591,23 @@ void show_image(image p, const char *name)
 
 void ipl_into_image(IplImage* src, image im)
 {
-    unsigned char *data = (unsigned char *)src->imageData;
-    int h = src->height;
-    int w = src->width;
-    int c = src->nChannels;
-    int step = src->widthStep;
-    int i, j, k;
+  IplImage* temp = cvCloneImage(src);
+  //unsigned char *data = (unsigned char *)src->imageData;
+  unsigned char *data = (unsigned char *)temp->imageData;
+  int h = src->height;
+  int w = src->width;
+  int c = src->nChannels;
+  int step = src->widthStep;
+  int i, j, k;
 
-    for(i = 0; i < h; ++i){
-        for(k= 0; k < c; ++k){
-            for(j = 0; j < w; ++j){
-                im.data[k*w*h + i*w + j] = data[i*step + j*c + k]/255.;
-            }
-        }
+  for(i = 0; i < h; ++i){
+    for(k= 0; k < c; ++k){
+      for(j = 0; j < w; ++j){
+	im.data[k*w*h + i*w + j] = data[i*step + j*c + k]/255.0;
+      }
     }
+  }
+  cvReleaseImage(&temp);
 }
 
 image ipl_to_image(IplImage* src)
